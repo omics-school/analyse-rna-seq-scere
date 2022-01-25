@@ -136,9 +136,7 @@ curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR340/004/SRR3405784/SRR3405784.fast
 curl -L ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR340/003/SRR3405783/SRR3405783.fastq.gz -O --output-dir reads
 ```
 
-Pour vérifier que notre script fonctionne, téléchargez les 5 premiers fichiers .fastq.gz.
-
-Créez un script intermédiaire en ne sélectionnant que les 6 premières lignes du script de téléchargement :
+Pour vérifier que notre script fonctionne, nous allons télécharger les 5 premiers fichiers *.fastq.gz*. Pour cela, créez un script intermédiaire en ne sélectionnant que les 6 premières lignes du script de téléchargement :
 
 ```bash
 head -n 6 sra_explorer_fastq_download_2.sh > sra_explorer_fastq_download_2_small.sh
@@ -150,6 +148,8 @@ Puis téléchargez les données :
 mkdir -p reads
 bash sra_explorer_fastq_download_2_small.sh
 ```
+
+Patientez quelques minutes que le téléchargement se termine, puis calculez l'espace occupé par les données :
 
 ```bash
 $ du -csh reads/*
