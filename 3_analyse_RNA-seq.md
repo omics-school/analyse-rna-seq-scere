@@ -22,7 +22,7 @@ $ tree
 ├── genome
 │   ├── genes.gtf
 │   └── genome.fa
-├── reads
+└── reads
     ├── SRR3405783.fastq.gz
     ├── SRR3405784.fastq.gz
     ├── SRR3405788.fastq.gz
@@ -52,13 +52,13 @@ Par exemple : `SRR3405783.fastq.gz`
 Créez le répertoire `reads_qc` qui va contenir les fichiers produits par le contrôle qualité des fichiers *fastq.gz* :
 
 ```bash
-$ mkdir -p reads_qc
+mkdir -p reads_qc
 ```
 
 Lancez FastQC avec la commande :
 
 ```bash
-$ fastqc reads/SRR3405783.fastq.gz --outdir reads_qc
+fastqc reads/SRR3405783.fastq.gz --outdir reads_qc
 ```
 
 FastQC va produire deux fichiers (un fichier avec l’extension `.html` et un autre avec l’extension `.zip`) dans le répertoire `reads_qc`. Si par exemple, vous avez analysé le fichier `reads/SRR3405783.fastq.gz`, vous obtiendrez les fichiers `reads_qc/SRR3405783_fastqc.html` et `reads_qc/SRR3405783_fastqc.zip`.
