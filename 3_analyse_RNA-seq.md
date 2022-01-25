@@ -14,7 +14,21 @@ Si cela n'est pas déjà fait, activez l’environnement conda *rnaseq-scere* :
 conda activate rnaseq-scere
 ```
 
-Déplacez-vous ensuite dans le répertoire contenant les répertoires `reads` et `genome` de *S. cerevisiae*.
+Déplacez-vous ensuite dans le répertoire contenant les répertoires `reads` et `genome` de *S. cerevisiae*. Vous devriez obtenir l'arborescence suivante :
+
+```bash
+$ tree
+.
+├── genome
+│   ├── genes.gtf
+│   └── genome.fa
+├── reads
+    ├── SRR3405783.fastq.gz
+    ├── SRR3405784.fastq.gz
+    ├── SRR3405788.fastq.gz
+    ├── SRR3405789.fastq.gz
+    └── SRR3405791.fastq.gz
+```
 
 ## Analyser manuellement un échantillon
 
