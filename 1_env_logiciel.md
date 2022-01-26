@@ -19,7 +19,7 @@ conda create -n rnaseq-scere -y
 Activez ensuite cet environnement :
 
 ```bash
-conda create -n rnaseq-scere -y
+conda activate rnaseq-scere
 ```
 
 ## Installer les logiciels nécessaires
@@ -57,12 +57,12 @@ $ fasterq-dump --version
 ```
 
 ```bash
-$ fastqc --versio
+$ fastqc --version
 FastQC v0.11.9
 ```
 
 ```bash
- STAR --version
+$ STAR --version
 2.7.10a
 ```
 
