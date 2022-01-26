@@ -1,4 +1,6 @@
 reads/
 reads_qc/
+reads_map/
 genome/
 genome_index/
+counts/

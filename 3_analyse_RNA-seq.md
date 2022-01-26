@@ -124,4 +124,117 @@ Vérifiez également que la longueur des *reads* est bien 51 en consultant les r
 L’indexation du génome n’est à faire qu’une seule fois pour chaque logiciel d’alignement.
 
 
+### Aligner les *reads* sur le génome de référence
 
+Le fichier *S1 Supporting Information Methods* précise la commande utilisée pour l'alignement :
+
+```bash
+STAR --runThreadN 1 --runMode alignReads --genomeDir
+path_to_yeast_genome_build --sjdbGTFfile path_to_yeast_transcriptome_gtf
+--readFilesIn sample.fastq --outFilterType BySJout --alignIntronMin 10 --
+alignIntronMax 3000 --outFileNamePrefix ./STAR_out/ --
+outFilterIntronMotifs RemoveNoncanonical
+```
+
+Les alignements des *reads* seront stockés dans le répertoire `reads_map` :
+
+```bash
+mkdir -p reads_map
+```
+
+Avec nos chemins de fichiers et quelques adaptations, la commande d'alignement devient :
+
+```bash
+STAR --runThreadN 1 \
+--runMode alignReads \
+--genomeDir genome_index \
+--sjdbGTFfile genome/genes.gtf \
+--readFilesCommand zcat \
+--readFilesIn reads/SRR3405783.fastq.gz \
+--outFilterType BySJout \
+--alignIntronMin 10 \
+--alignIntronMax 3000 \
+--outFileNamePrefix reads_map/SRR3405783 \
+--outFilterIntronMotifs RemoveNoncanonical \
+--outSAMtype BAM SortedByCoordinate
+```
+
+**Remarques** :
+
+- L'article orginal de STAR « [STAR: ultrafast universal RNA-seq aligner](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3530905/) » (*Bioinformatics, 2013) précise que :
+    > STAR’s default parameters are optimized for mammalian genomes. Other species may require significant modifications of some alignment parameters; in particular, the maximum and minimum intron sizes have to be reduced for organisms with smaller introns.
+    
+    Ceci explique pourquoi les options `--alignIntronMin 10` et `--alignIntronMax 3000` ont été adaptées pour le génome de la levure *S. cerevisiae*.
+
+- L'option `--readFilesCommand zcat` n'était pas présente dans la commande fournie en *Supporting information*. Nous l'avons ajoutée car les fichiers contenant les *reads* (*.fastq.gz*) sont compressés et il faut demander explicitement à STAR de le prendre en charge. Consultez toujour la [documentation](https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf) de l'outil que vous utilisez avant de lancer l'alignement !
+
+- Le comptage des *reads* alignés sur le génome et la quantification des transcrits (voir plus bas) nécessitent des *reads* triés au format SAM ou BAM. Dans les commandes fournies en *Supporting information*, les fichiers d'alignement sont au format SAM (fichier texte non compressé). Pour gagner un peu plus de place, nous demandons à STAR de produire des fichiers BAM (binaires) alignés. Pour cela, nous utilisons l'option `--outSAMtype BAM SortedByCoordinate`. Bien sûr cette étape aurait pu être réalisée par `samtools`, mais autant la faire directement avec `STAR`.
+
+Lancez l'alignement avec STAR et vérifiez que tout se déroule sans problème.
+
+
+### Compter les *reads* et les transcrits
+
+Le fichier *S1 Supporting Information Methods* précise les commandes utilisées pour le comptage des *reads* :
+
+```bash
+htseq-count --order=pos --stranded=reverse --mode=intersection-nonempty
+sample.aligned.sorted.sam path_to_yeast_transcriptome_gtf > sample.txt
+```
+
+et celui des transcrits :
+
+```bash
+cuffquant --library-type=fr-firststrand path_to_yeast_transcriptome_gtf
+sample.aligned.sorted.sam
+```
+
+Enfin, la normalisation des comptages des transcrits :
+
+```bash
+cuffnorm --library-type=fr-firststrand path_to_yeast_transcriptome_gtf
+*.cxb
+```
+
+Nous stockons les fichiers de comptage dans le répertoire `counts/SRR3405783` :
+
+```bash
+mkdir -p counts/SRR3405783
+```
+
+L'indexation des *reads* alignés n'est pas explicitement mentionné dans les *Supporting Informations* mais est cependant nécessaire par `HTSeq` :
+
+```bash
+samtools index reads_map/SRR3405783Aligned.sortedByCoord.out.bam
+```
+
+La commande pour compter les *reads* devient alors :
+
+```bash
+htseq-count --order=pos --stranded=reverse \
+--mode=intersection-nonempty \
+reads_map/SRR3405783Aligned.sortedByCoord.out.bam genome/genes.gtf > counts/SRR3405783/count.txt
+```
+
+Puis celle pour compter les transcrits :
+
+```bash
+cuffquant --library-type=fr-firststrand genome/genes.gtf \
+reads_map/SRR3405783Aligned.sortedByCoord.out.bam \
+--output-dir counts/SRR3405783
+```
+
+Remarque :
+
+- Par défaut, `cuffquant` écrit un fichier `abundances.cxb`.
+- Nous ajoutons l'option `--output-dir counts/SRR3405783` pour indiquer où stocker les résultats produits par `cuffquant` (voir [documentation](http://cole-trapnell-lab.github.io/cufflinks/cuffquant/)). Cela nous permet de distinguer les résultats obtenus à partir de différents fichiers *.fastq.gz*
+
+
+Avant de Enfin, on normalise les comptages de transcrits :
+
+```bash
+cuffnorm --library-type=fr-firststrand genome/genes.gtf \
+counts/*/*.cxb
+```
+
+Remarque : Dans le cas présent, cette normalisation n'a pas de sens car nous n'avons aligné et quantifié qu'un seul fichier *.fastq.gz*. Cette étape sera par contre pertinente lorsque les 50 fichiers *.fastq.gz* seront traités.
