@@ -40,12 +40,12 @@ Le fichier *S1 Supporting Information Methods* fournit des précisions suppléme
 
 En résumé, nous avons besoin d'installer les outils : `STAR`, `HTSeq-count` et `Cufflinks`. Aucune version de logiciel n'étant spécifiée, nous allons installer la dernière version disponible.
 
-Nous installerons également [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) pour contrôler la qualité des *reads*.
+Nous installerons également [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) pour contrôler la qualité des *reads*, ainsi que `samtools` qui n'est pas explicitement mentionné dans l'article ni dans les *Supporting Information* mais qui est nécessaire pour indexer les *reads* alignés.
 
 Dans l'environnement conda `rnaseq-scere`, installez tous les logiciels nécessaires :
 
 ```bash
-mamba install -c conda-forge -c bioconda sra-tools fastqc star htseq cufflinks -y
+mamba install -c conda-forge -c bioconda sra-tools fastqc star htseq cufflinks samtools -y
 ```
 
 Vérifiez alors les différentes versions des logiciels :
@@ -74,4 +74,9 @@ $ htseq-count --version
 ```bash
 $ cufflinks 2>&1 | head -n 1
 cufflinks v2.2.1
+```
+
+```bash
+$ samtools --version | head -n 1
+samtools 1.14
 ```
