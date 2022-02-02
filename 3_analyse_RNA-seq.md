@@ -83,7 +83,8 @@ STAR --runMode genomeGenerate \
 --genomeDir genome_index \
 --genomeFastaFiles genome/genome.fa \
 --sjdbGTFfile genome/genes.gtf \
---sjdbOverhang 50
+--sjdbOverhang 50 \
+--genomeSAindexNbases 10
 ```
 
 L'aide de STAR pour l'option `--sjdbOverhang` indique :
@@ -121,7 +122,11 @@ Le paramètre `--sjdbOverhang` vaut donc 50 (51 - 1).
 
 Vérifiez également que la longueur des *reads* est bien 51 en consultant les résultats du contrôle qualité fournis par FastQC.
 
-L’indexation du génome n’est à faire qu’une seule fois pour chaque logiciel d’alignement.
+Enfin, le paramètre `--genomeSAindexNbases 10` est conseillé par STAR si on le lance sans :
+
+> !!!!! WARNING: --genomeSAindexNbases 14 is too large for the genome size=12157105, which may cause seg-fault at the mapping step. Re-run genome generation with recommended --genomeSAindexNbases 10
+
+Nous vous rappelons que l’indexation du génome n’est à faire qu’une seule fois pour chaque logiciel d’alignement.
 
 
 ### Aligner les *reads* sur le génome de référence
@@ -154,7 +159,7 @@ STAR --runThreadN 1 \
 --outFilterType BySJout \
 --alignIntronMin 10 \
 --alignIntronMax 3000 \
---outFileNamePrefix reads_map/SRR3405783 \
+--outFileNamePrefix reads_map/SRR3405783_ \
 --outFilterIntronMotifs RemoveNoncanonical \
 --outSAMtype BAM SortedByCoordinate
 ```
@@ -205,7 +210,7 @@ mkdir -p counts/SRR3405783
 L'indexation des *reads* alignés n'est pas explicitement mentionné dans les *Supporting Informations* mais est cependant nécessaire par `HTSeq` :
 
 ```bash
-samtools index reads_map/SRR3405783Aligned.sortedByCoord.out.bam
+samtools index reads_map/SRR3405783_Aligned.sortedByCoord.out.bam
 ```
 
 La commande pour compter les *reads* devient alors :
@@ -213,28 +218,40 @@ La commande pour compter les *reads* devient alors :
 ```bash
 htseq-count --order=pos --stranded=reverse \
 --mode=intersection-nonempty \
-reads_map/SRR3405783Aligned.sortedByCoord.out.bam genome/genes.gtf > counts/SRR3405783/count.txt
+reads_map/SRR3405783_Aligned.sortedByCoord.out.bam genome/genes.gtf > counts/SRR3405783/count.txt
 ```
 
 Puis celle pour compter les transcrits :
 
 ```bash
 cuffquant --library-type=fr-firststrand genome/genes.gtf \
-reads_map/SRR3405783Aligned.sortedByCoord.out.bam \
+reads_map/SRR3405783_Aligned.sortedByCoord.out.bam \
 --output-dir counts/SRR3405783
 ```
 
 Remarque :
 
 - Par défaut, `cuffquant` écrit un fichier `abundances.cxb`.
-- Nous ajoutons l'option `--output-dir counts/SRR3405783` pour indiquer où stocker les résultats produits par `cuffquant` (voir [documentation](http://cole-trapnell-lab.github.io/cufflinks/cuffquant/)). Cela nous permet de distinguer les résultats obtenus à partir de différents fichiers *.fastq.gz*
+- Nous ajoutons l'option `--output-dir counts/SRR3405783` pour indiquer où stocker les résultats produits par `cuffquant` (voir [documentation](http://cole-trapnell-lab.github.io/cufflinks/cuffquant/)). Cela nous permet de distinguer les résultats obtenus à partir de différents fichiers *.fastq.gz*.
 
 
-Avant de Enfin, on normalise les comptages de transcrits :
+Enfin, on normalise les comptages des transcrits :
 
 ```bash
 cuffnorm --library-type=fr-firststrand genome/genes.gtf \
-counts/*/*.cxb
+counts/*/*.cxb --output-dir counts
 ```
 
-Remarque : Dans le cas présent, cette normalisation n'a pas de sens car nous n'avons aligné et quantifié qu'un seul fichier *.fastq.gz*. Cette étape sera par contre pertinente lorsque les 50 fichiers *.fastq.gz* seront traités.
+Remarques : 
+
+- Dans le cas présent, cette normalisation va échouer car nous n'avons aligné et quantifié qu'un seul fichier *.fastq.gz*. Cette étape sera par contre pertinente lorsque plusieurs fichiers *.fastq.gz* seront traités.
+- L'option `--output-dir counts` indique où stocker les fichiers produits par `cuffnorm`.
+
+
+## Analyser automatiquement 3 échantillons
+
+Téléchargez le script `analyse_locale.sh` qui analyse 3 échantillons :
+
+```bash
+wget 
+```
