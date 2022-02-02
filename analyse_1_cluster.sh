@@ -24,7 +24,7 @@ genome_dir="${data_dir}/genome"
 # chemin et nom du fichier contenant le génome de référence.
 genome_file="${genome_dir}/genome.fa"
 # chemin et nom du fichier contenant les annotations
-annotation_file="${genome_dir}/genes.gff"
+annotation_file="${genome_dir}/genes.gtf"
 # répertoire contenant les fichiers .fastq.gz
 fastq_dir="${data_dir}/reads"
 
@@ -34,7 +34,7 @@ echo "=============================================================="
 echo "Indexer le génome de référence"
 echo "=============================================================="
 mkdir -p "${base_dir}/genome_index"
-STAR --runThreadN "${SLURM_CPUS_PER_TASK}" \
+srun STAR --runThreadN "${SLURM_CPUS_PER_TASK}" \
 --runMode genomeGenerate \
 --genomeDir "${base_dir}/genome_index" \
 --genomeFastaFiles "${genome_file}" \

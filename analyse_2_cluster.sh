@@ -43,14 +43,14 @@ echo "=============================================================="
 echo "Contrôler la qualité : échantillon ${sample}"
 echo "=============================================================="
 mkdir -p "${base_dir}/reads_qc"
-fastqc "${fastq_dir}/${sample}.fastq.gz" --outdir "${base_dir}/reads_qc"
+srun fastqc "${fastq_dir}/${sample}.fastq.gz" --outdir "${base_dir}/reads_qc"
 
 
 echo "=============================================================="
 echo "Aligner les reads sur le génome de référence : échantillon ${sample}"
 echo "=============================================================="
 mkdir -p "${base_dir}/reads_map"
-STAR --runThreadN "${SLURM_CPUS_PER_TASK}" \
+srun STAR --runThreadN "${SLURM_CPUS_PER_TASK}" \
 --runMode alignReads \
 --genomeDir "${base_dir}/genome_index" \
 --sjdbGTFfile "${annotation_file}" \
@@ -67,14 +67,14 @@ STAR --runThreadN "${SLURM_CPUS_PER_TASK}" \
 echo "=============================================================="
 echo "Indexer les reads alignés : échantillon ${sample}"
 echo "=============================================================="
-samtools index "${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam"
+srun samtools index "${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam"
 
 
 echo "=============================================================="
 echo "Compter les reads : échantillon ${sample}"
 echo "=============================================================="
 mkdir -p "${base_dir}/counts/${sample}"
-htseq-count --order=pos --stranded=reverse \
+srun htseq-count --order=pos --stranded=reverse \
 --mode=intersection-nonempty \
 "${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam" \
 "${annotation_file}" > "${base_dir}/counts/${sample}/count.txt"
@@ -82,7 +82,7 @@ htseq-count --order=pos --stranded=reverse \
 echo "=============================================================="
 echo "Compter les transcrits : échantillon ${sample}"
 echo "=============================================================="
-cuffquant --num-threads "${SLURM_CPUS_PER_TASK}" \
+srun cuffquant --num-threads "${SLURM_CPUS_PER_TASK}" \
 --library-type=fr-firststrand "${annotation_file}" \
 "${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam" \
 --output-dir "${base_dir}/counts/${sample}"
