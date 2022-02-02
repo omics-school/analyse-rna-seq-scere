@@ -85,7 +85,7 @@ mkdir -p "${base_dir}/counts/${sample}"
 srun htseq-count --order=pos --stranded=reverse \
 --mode=intersection-nonempty \
 "${base_dir}/reads_map/${sample}_Aligned.sorted.out.bam" \
-"${annotation_file}" > "${base_dir}/counts/${sample}/count.txt"
+"${annotation_file}" > "${base_dir}/counts/${sample}/count_${sample}.txt"
 
 
 echo "=============================================================="
