@@ -166,12 +166,12 @@ STAR --runThreadN 1 \
 
 **Remarques** :
 
-- L'article orginal de STAR « [STAR: ultrafast universal RNA-seq aligner](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3530905/) » (*Bioinformatics, 2013) précise que :
+- L'article orginal de STAR « [STAR: ultrafast universal RNA-seq aligner](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3530905/) » (*Bioinformatics*, 2013) précise que :
     > STAR’s default parameters are optimized for mammalian genomes. Other species may require significant modifications of some alignment parameters; in particular, the maximum and minimum intron sizes have to be reduced for organisms with smaller introns.
     
     Ceci explique pourquoi les options `--alignIntronMin 10` et `--alignIntronMax 3000` ont été adaptées pour le génome de la levure *S. cerevisiae*.
 
-- L'option `--readFilesCommand zcat` n'était pas présente dans la commande fournie en *Supporting information*. Nous l'avons ajoutée car les fichiers contenant les *reads* (*.fastq.gz*) sont compressés et il faut demander explicitement à STAR de le prendre en charge. Consultez toujour la [documentation](https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf) de l'outil que vous utilisez avant de lancer l'alignement !
+- L'option `--readFilesCommand zcat` n'était pas présente dans la commande fournie en *Supporting information*. Nous l'avons ajoutée car les fichiers contenant les *reads* (*.fastq.gz*) sont compressés et il faut demander explicitement à STAR de le prendre en charge. Pensez à consultez toujour la [documentation](https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf) de l'outil que vous utilisez !
 
 Lancez l'alignement avec STAR et vérifiez que tout se déroule sans problème.
 
@@ -207,11 +207,11 @@ mkdir -p counts/SRR3405783
 Le tri et l'indexation des *reads* alignés n'est pas explicitement mentionné dans les *Supporting Informations* mais est cependant nécessaire par `HTSeq` :
 
 ```bash
-samtools sort reads_map/SRR3405783_Aligned.sorted.out.bam -o reads_map/SRR3405783_Aligned.sorted.out.bam
+samtools sort reads_map/SRR3405783_Aligned.out.bam -o reads_map/SRR3405783_Aligned.sorted.out.bam
 samtools index reads_map/SRR3405783_Aligned.sorted.out.bam
 ```
 
-Remarque : le tri des *reads* peut a priori se faire directement avec STAR en utilisant l'option `--outSAMtype BAM SortedByCoordinate`. Cependant, les tests réalisés sur le cluster ont montré qu'il y avait parfois des soucis avec cette option. Nous conservons `samtools` pour le tri des *reads*.
+Remarque : le tri des *reads* peut a priori se faire directement avec STAR en utilisant l'option `--outSAMtype BAM SortedByCoordinate`. Cependant, les tests réalisés sur le cluster ont montré qu'il y avait parfois des soucis avec cette option. Nous préférons donc utiliser `samtools` pour le tri des *reads*.
 
 
 La commande pour compter les *reads* devient alors :
@@ -219,14 +219,14 @@ La commande pour compter les *reads* devient alors :
 ```bash
 htseq-count --order=pos --stranded=reverse \
 --mode=intersection-nonempty \
-reads_map/SRR3405783_Aligned.sortedByCoord.out.bam genome/genes.gtf > counts/SRR3405783/count_SRR3405783.txt
+reads_map/SRR3405783_Aligned.sorted.out.bam genome/genes.gtf > counts/SRR3405783/count_SRR3405783.txt
 ```
 
 Puis celle pour compter les transcrits :
 
 ```bash
 cuffquant --library-type=fr-firststrand genome/genes.gtf \
-reads_map/SRR3405783_Aligned.sortedByCoord.out.bam \
+reads_map/SRR3405783_Aligned.sorted.out.bam \
 --output-dir counts/SRR3405783
 ```
 
@@ -251,7 +251,21 @@ Remarques :
 
 ## Analyser automatiquement 3 échantillons
 
-Vérifiez que vous êtes bien dans le répertoire `/mnt/c/Users/omics/rnaseq_scere`. Assurez-vous également que vous avez préparé les données correctement, notamment les répertoires `reads` et `genome`.
+Vérifiez que vous êtes bien dans le répertoire `/mnt/c/Users/omics/rnaseq_scere`. Assurez-vous également que vous avez préparé les données correctement, notamment les répertoires `reads` et `genome` :
+
+```bash
+$ tree
+.
+├── genome
+│   ├── genes.gtf
+│   └── genome.fa
+└── reads
+    ├── SRR3405783.fastq.gz
+    ├── SRR3405784.fastq.gz
+    ├── SRR3405788.fastq.gz
+    ├── SRR3405789.fastq.gz
+    └── SRR3405791.fastq.gz
+```
 
 Téléchargez le script `analyse_locale.sh` qui analyse 3 échantillons :
 
@@ -302,7 +316,7 @@ tree /shared/projects/form_2021_29/data/rnaseq_scere
 L'analyse complète des données RNA-seq de *Saccharomyces cerevisiae* (50 fichiers *.fastq.gz*) va se faire en 3 étapes :
 
 1. Indexer le génome. Cette étape est à réaliser une seule fois.
-2. Aligner les *reads* sur le génome de référence. Cette étape est particulière car elle sera distribuée sur autant de jobs qu'il y a de fichiers *.fastq.gz à analyser*
+2. Aligner les *reads* sur le génome de référence. Cette étape est particulière car elle sera distribuée sur autant de jobs qu'il y a de fichiers *.fastq.gz* à analyser.
 3. Normaliser les transcrits. Cette étape est réalisée en dernier et nécessite que tous les jobs de l'étape 2 soient terminés.
 
 ### Indexer le génome de référence

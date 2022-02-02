@@ -194,3 +194,18 @@ Supprimez enfin le répertoire `Saccharomyces_cerevisiae` qui ne nous intéresse
 rm -rf Saccharomyces_cerevisiae
 ```
 
+In fine, vous devriez obtenir l'organisation de fichiers suivante :
+
+```bash
+$ tree
+.
+├── genome
+│   ├── genes.gtf
+│   └── genome.fa
+└── reads
+    ├── SRR3405783.fastq.gz
+    ├── SRR3405784.fastq.gz
+    ├── SRR3405788.fastq.gz
+    ├── SRR3405789.fastq.gz
+    └── SRR3405791.fastq.gz
+```
