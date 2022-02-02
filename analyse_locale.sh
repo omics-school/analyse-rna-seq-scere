@@ -59,12 +59,18 @@ do
     --alignIntronMax 3000 \
     --outFileNamePrefix "${base_dir}/reads_map/${sample}_" \
     --outFilterIntronMotifs RemoveNoncanonical \
-    --outSAMtype BAM SortedByCoordinate
+    --outSAMtype BAM Unsorted
+
+    echo "=============================================================="
+    echo "Trier les reads alignés : échantillon ${sample}"
+    echo "=============================================================="
+    samtools sort "${base_dir}/reads_map/${sample}_Aligned.out.bam" \
+    -o "${base_dir}/reads_map/${sample}_Aligned.sorted.out.bam"
 
     echo "=============================================================="
     echo "Indexer les reads alignés : échantillon ${sample}"
     echo "=============================================================="
-    samtools index "${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam"
+    samtools index "${base_dir}/reads_map/${sample}_Aligned.sorted.out.bam"
 
     echo "=============================================================="
     echo "Compter les reads : échantillon ${sample}"
@@ -72,14 +78,14 @@ do
     mkdir -p "${base_dir}/counts/${sample}"
     htseq-count --order=pos --stranded=reverse \
     --mode=intersection-nonempty \
-    "${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam" \
-    "${annotation_file}" > "${base_dir}/counts/${sample}/count.txt"
+    "${base_dir}/reads_map/${sample}_Aligned.sorted.out.bam" \
+    "${annotation_file}" > "${base_dir}/counts/${sample}/count_${sample}.txt"
     
     echo "=============================================================="
     echo "Compter les transcrits : échantillon ${sample}"
     echo "=============================================================="
     cuffquant --library-type=fr-firststrand "${annotation_file}" \
-    "${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam" \
+    "${base_dir}/reads_map/${sample}_Aligned.sorted.out.bam" \
     --output-dir "${base_dir}/counts/${sample}"
 done
 

@@ -66,7 +66,7 @@ srun STAR --runThreadN "${SLURM_CPUS_PER_TASK}" \
 
 
 echo "=============================================================="
-echo "Ordonner les reads alignés : échantillon ${sample}"
+echo "Trier les reads alignés : échantillon ${sample}"
 echo "=============================================================="
 srun samtools sort "${base_dir}/reads_map/${sample}_Aligned.out.bam" \
 -o "${base_dir}/reads_map/${sample}_Aligned.sorted.out.bam"

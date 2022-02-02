@@ -161,7 +161,7 @@ STAR --runThreadN 1 \
 --alignIntronMax 3000 \
 --outFileNamePrefix reads_map/SRR3405783_ \
 --outFilterIntronMotifs RemoveNoncanonical \
---outSAMtype BAM SortedByCoordinate
+--outSAMtype BAM Unsorted
 ```
 
 **Remarques** :
@@ -173,10 +173,7 @@ STAR --runThreadN 1 \
 
 - L'option `--readFilesCommand zcat` n'était pas présente dans la commande fournie en *Supporting information*. Nous l'avons ajoutée car les fichiers contenant les *reads* (*.fastq.gz*) sont compressés et il faut demander explicitement à STAR de le prendre en charge. Consultez toujour la [documentation](https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf) de l'outil que vous utilisez avant de lancer l'alignement !
 
-- Le comptage des *reads* alignés sur le génome et la quantification des transcrits (voir plus bas) nécessitent des *reads* triés au format SAM ou BAM. Dans les commandes fournies en *Supporting information*, les fichiers d'alignement sont au format SAM (fichier texte non compressé). Pour gagner un peu plus de place, nous demandons à STAR de produire des fichiers BAM (binaires) alignés. Pour cela, nous utilisons l'option `--outSAMtype BAM SortedByCoordinate`. Bien sûr cette étape aurait pu être réalisée par `samtools`, mais autant la faire directement avec `STAR`.
-
 Lancez l'alignement avec STAR et vérifiez que tout se déroule sans problème.
-
 
 ### Compter les *reads* et les transcrits
 
@@ -207,18 +204,22 @@ Nous stockons les fichiers de comptage dans le répertoire `counts/SRR3405783` :
 mkdir -p counts/SRR3405783
 ```
 
-L'indexation des *reads* alignés n'est pas explicitement mentionné dans les *Supporting Informations* mais est cependant nécessaire par `HTSeq` :
+Le tri et l'indexation des *reads* alignés n'est pas explicitement mentionné dans les *Supporting Informations* mais est cependant nécessaire par `HTSeq` :
 
 ```bash
-samtools index reads_map/SRR3405783_Aligned.sortedByCoord.out.bam
+samtools sort reads_map/SRR3405783_Aligned.sorted.out.bam -o reads_map/SRR3405783_Aligned.sorted.out.bam
+samtools index reads_map/SRR3405783_Aligned.sorted.out.bam
 ```
+
+Remarque : le tri des *reads* peut a priori se faire directement avec STAR en utilisant l'option `--outSAMtype BAM SortedByCoordinate`. Cependant, les tests réalisés sur le cluster ont montré qu'il y avait parfois des soucis avec cette option. Nous conservons `samtools` pour le tri des *reads*.
+
 
 La commande pour compter les *reads* devient alors :
 
 ```bash
 htseq-count --order=pos --stranded=reverse \
 --mode=intersection-nonempty \
-reads_map/SRR3405783_Aligned.sortedByCoord.out.bam genome/genes.gtf > counts/SRR3405783/count.txt
+reads_map/SRR3405783_Aligned.sortedByCoord.out.bam genome/genes.gtf > counts/SRR3405783/count_SRR3405783.txt
 ```
 
 Puis celle pour compter les transcrits :
