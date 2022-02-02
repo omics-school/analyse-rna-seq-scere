@@ -15,6 +15,7 @@ set -euo pipefail
 module load fastqc/0.11.9
 module load star/2.7.9a
 module load samtools/1.14
+module load htseq/0.13.5
 module load cufflinks/2.2.1
 
 
@@ -78,6 +79,7 @@ srun htseq-count --order=pos --stranded=reverse \
 --mode=intersection-nonempty \
 "${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam" \
 "${annotation_file}" > "${base_dir}/counts/${sample}/count.txt"
+
 
 echo "=============================================================="
 echo "Compter les transcrits : échantillon ${sample}"
