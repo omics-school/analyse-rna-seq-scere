@@ -356,3 +356,25 @@ sbatch -A form_2021_29 analyse_2_cluster.sh
 
 Suivez l'évolution de votre job avec les commandes habituelles.
 
+
+## Normaliser les comptages des transcrits
+
+Téléchargez le script `analyse_3_cluster.sh` :
+
+```bash
+wget https://raw.githubusercontent.com/omics-school/analyse-rna-seq-scere/master/analyse_3_cluster.sh
+```
+
+puis lancez ensuite ce script :
+
+```bash
+sbatch -A form_2021_29 analyse_3_cluster.sh
+```
+
+Suivez l'évolution de votre job avec les commandes habituelles.
+
+Les données de comptage agrégées et normalisées se trouvent dans le répertoire :
+
+```bash
+/shared/projects/form_2021_29/$USER/rnaseq_scere/counts
+```
