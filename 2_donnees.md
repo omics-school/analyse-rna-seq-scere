@@ -12,6 +12,13 @@ L'article orginale publié en 2016 par [Kelliher *et al.*](https://journals.plos
 
 Le numéro du projet qui nous intéresse est donc : **GSE80474**
 
+Sur votre machine du DU, créez le répertoire `/mnt/c/Users/omics/rnaseq_scere` puis déplacez-vous dans ce répertoire :
+
+```bash
+mkdir -p /mnt/c/Users/omics/rnaseq_scere
+cd /mnt/c/Users/omics/rnaseq_scere
+```
+
 ## Données de séquençage
 
 ### Méthode 1 : SRA Run Selector

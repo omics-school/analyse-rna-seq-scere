@@ -6,7 +6,7 @@ license: Creative Commons Attribution-ShareAlike (CC BY-SA 4.0)
 
 # Préparer l'environnement logiciel 🧰
 
-On suppose que conda et mamba sont installés.
+On suppose que conda et mamba sont installés sur votre machine.
 
 ## Créer l'environnement conda
 
