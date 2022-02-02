@@ -68,14 +68,14 @@ srun STAR --runThreadN "${SLURM_CPUS_PER_TASK}" \
 echo "=============================================================="
 echo "Ordonner les reads alignés : échantillon ${sample}"
 echo "=============================================================="
-srun samtools sort "${base_dir}/reads_map/${sample}_Aligned.unsorted.out.bam" \
--o "${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam"
+srun samtools sort "${base_dir}/reads_map/${sample}_Aligned.out.bam" \
+-o "${base_dir}/reads_map/${sample}_Aligned.sorted.out.bam"
 
 
 echo "=============================================================="
 echo "Indexer les reads alignés : échantillon ${sample}"
 echo "=============================================================="
-srun samtools index "${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam"
+srun samtools index "${base_dir}/reads_map/${sample}_Aligned.sorted.out.bam"
 
 
 echo "=============================================================="
@@ -84,7 +84,7 @@ echo "=============================================================="
 mkdir -p "${base_dir}/counts/${sample}"
 srun htseq-count --order=pos --stranded=reverse \
 --mode=intersection-nonempty \
-"${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam" \
+"${base_dir}/reads_map/${sample}_Aligned.sorted.out.bam" \
 "${annotation_file}" > "${base_dir}/counts/${sample}/count.txt"
 
 
@@ -93,5 +93,5 @@ echo "Compter les transcrits : échantillon ${sample}"
 echo "=============================================================="
 srun cuffquant --num-threads "${SLURM_CPUS_PER_TASK}" \
 --library-type=fr-firststrand "${annotation_file}" \
-"${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam" \
+"${base_dir}/reads_map/${sample}_Aligned.sorted.out.bam" \
 --output-dir "${base_dir}/counts/${sample}"
