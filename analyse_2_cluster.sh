@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --mem=2G
+#SBATCH --mem=3G
 #SBATCH --cpus-per-task=8
 #SBATCH --array=0-3            # limit to 4 samples. Use --array=0-49 for all 50 samples.
 
@@ -62,7 +62,14 @@ srun STAR --runThreadN "${SLURM_CPUS_PER_TASK}" \
 --alignIntronMax 3000 \
 --outFileNamePrefix "${base_dir}/reads_map/${sample}_" \
 --outFilterIntronMotifs RemoveNoncanonical \
---outSAMtype BAM SortedByCoordinate
+--outSAMtype BAM Unsorted
+
+
+echo "=============================================================="
+echo "Ordonner les reads alignés : échantillon ${sample}"
+echo "=============================================================="
+srun samtools sort "${base_dir}/reads_map/${sample}_Aligned.unsorted.out.bam" \
+-o "${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam"
 
 
 echo "=============================================================="
