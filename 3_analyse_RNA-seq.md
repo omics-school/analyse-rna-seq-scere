@@ -245,13 +245,114 @@ counts/*/*.cxb --output-dir counts
 Remarques : 
 
 - Dans le cas présent, cette normalisation va échouer car nous n'avons aligné et quantifié qu'un seul fichier *.fastq.gz*. Cette étape sera par contre pertinente lorsque plusieurs fichiers *.fastq.gz* seront traités.
-- L'option `--output-dir counts` indique où stocker les fichiers produits par `cuffnorm`.
+- L'option `--output-dir counts` indique où stocker les fichiers produits par `cuffnorm` (voir [documentation](http://cole-trapnell-lab.github.io/cufflinks/cuffnorm/)).
 
 
 ## Analyser automatiquement 3 échantillons
 
+Vérifiez que vous êtes bien dans le répertoire `/mnt/c/Users/omics/rnaseq_scere`. Assurez-vous également que vous avez préparé les données correctement, notamment les répertoires `reads` et `genome`.
+
 Téléchargez le script `analyse_locale.sh` qui analyse 3 échantillons :
 
 ```bash
-wget 
+wget https://raw.githubusercontent.com/omics-school/analyse-rna-seq-scere/master/analyse_locale.sh
 ```
+
+Lancez ensuite le script d'analyse :
+
+```bash
+bash analyse_locale.sh
+```
+
+L'analyse devrait prendre plusieurs dizaines de minutes.
+
+Vérifiez régulièrement votre terminal qu'aucune erreur n'apparaît.
+
+
+## Analyser automatiquement 50 échantillons sur un cluster
+
+Connectez-vous sur le cluster de l'IFB.
+
+Déplacez-vous dans votre répertoire de travail :
+
+```bash
+cd "/shared/projects/form_2021_29/$USER"
+```
+
+puis créez le répertoire `rnaseq_scere` :
+
+```bash
+mkdir -p rnaseq_scere
+```
+
+et déplacez-vous à l'intérieur :
+
+```bash
+cd "/shared/projects/form_2021_29/$USER/rnaseq_scere"
+```
+
+Vérifiez que toutes les données sont bien dans `/shared/projects/form_2021_29/data/rnaseq_scere` :
+
+```bash
+tree /shared/projects/form_2021_29/data/rnaseq_scere
+```
+
+L'analyse complète des données RNA-seq de *Saccharomyces cerevisiae* (50 fichiers *.fastq.gz*) va se faire en 3 étapes :
+
+1. Indexer le génome. Cette étape est à réaliser une seule fois.
+2. Aligner les *reads* sur le génome de référence. Cette étape est particulière car elle sera distribuée sur autant de jobs qu'il y a de fichiers *.fastq.gz à analyser*
+3. Normaliser les transcrits. Cette étape est réalisée en dernier et nécessite que tous les jobs de l'étape 2 soient terminés.
+
+### Indexer le génome de référence
+
+Téléchargez le script `analyse_1_cluster.sh` :
+
+```bash
+wget https://raw.githubusercontent.com/omics-school/analyse-rna-seq-scere/master/analyse_1_cluster.sh
+```
+
+puis lancez ensuite ce script :
+
+```bash
+sbatch -A form_2021_29 analyse_1_cluster.sh
+```
+
+Vérifiez que votre job est bien lancé avec la commande :
+
+```bash
+squeue -u $USER
+```
+
+Le fichier `slurm-JOBID.out` est également créé et contient les sorties du script. Pour consulter son contenu, tapez :
+
+```bash
+cat slurm-JOBID.out
+```
+
+avec `JOBID` le numéro de votre job.
+
+Suivez également en temps réel l'exécution de votre job avec la commande :
+
+```bash
+watch sacct --format=JobID,JobName,State,Start,Elapsed,CPUTime,NodeList -j JOBID
+```
+
+avec `JOBID` le numéro de votre job.
+
+
+## Aligner les *reads* sur le génome de référence
+
+Téléchargez le script `analyse_2_cluster.sh` :
+
+```bash
+wget https://raw.githubusercontent.com/omics-school/analyse-rna-seq-scere/master/analyse_2_cluster.sh
+```
+
+puis lancez ensuite ce script :
+
+```bash
+sbatch -A form_2021_29 analyse_2_cluster.sh
+```
+
+Suivez l'évolution de votre job avec les commandes habituelles.
+
