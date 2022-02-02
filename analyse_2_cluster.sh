@@ -12,7 +12,10 @@ set -euo pipefail
 
 
 # chargement des modules nécessaires
+module load fastqc/0.11.9
 module load star/2.7.9a
+module load samtools/1.14
+module load cufflinks/2.2.1
 
 
 # répertoire de base (le répertoire depuis lequel vous lancez le script)
@@ -60,10 +63,12 @@ STAR --runThreadN "${SLURM_CPUS_PER_TASK}" \
 --outFilterIntronMotifs RemoveNoncanonical \
 --outSAMtype BAM SortedByCoordinate
 
+
 echo "=============================================================="
 echo "Indexer les reads alignés : échantillon ${sample}"
 echo "=============================================================="
 samtools index "${base_dir}/reads_map/${sample}_Aligned.sortedByCoord.out.bam"
+
 
 echo "=============================================================="
 echo "Compter les reads : échantillon ${sample}"
