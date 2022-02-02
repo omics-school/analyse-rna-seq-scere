@@ -269,6 +269,7 @@ L'analyse devrait prendre plusieurs dizaines de minutes.
 
 Vérifiez régulièrement votre terminal qu'aucune erreur n'apparaît.
 
+Le fichier qui contient le comptage normalisé des transcrits est `counts/genes.count_table`.
 
 ## Analyser automatiquement 50 échantillons sur un cluster
 
@@ -374,8 +375,43 @@ sbatch -A form_2021_29 analyse_3_cluster.sh
 
 Suivez l'évolution de votre job avec les commandes habituelles.
 
-Les données de comptage agrégées et normalisées se trouvent dans le répertoire :
+Les données de comptage agrégées et normalisées se trouvent dans le fichier :
 
 ```bash
-/shared/projects/form_2021_29/$USER/rnaseq_scere/counts
+/shared/projects/form_2021_29/$USER/rnaseq_scere/counts/counts/genes.count_table
 ```
+
+## Bonus : aggréger les données produites par HTSeq-count
+
+Si vous analysez plusieurs échantillons, vous souhaiterez peut-être aggréger tous les fichiers produits par HTSeq-count.
+
+Les instructions Bash suivantes pourront vous y aider :
+
+```bash
+for name in counts/*/*.txt
+do
+    echo "${name}"
+    # On récupère le nom de l'échantillon
+    sample="$(basename -s .txt ${name} | sed 's/count_//g' )"
+    # On stocke dans un fichier temporaire pour chaque échantillon
+    # un entête avec "gene" et le nom de l'échantillon
+    echo -e "${sample}" > "count_${sample}_tmp.txt"
+    # On copie le contenu du fichier de comptage dans ce fichier temporaire
+    cut -f2 "${name}" >> "count_${sample}_tmp.txt"
+done
+
+# On récupère les noms des gènes
+echo "gene" > genes.txt
+cut -f1 "${name}" >> genes.txt
+
+# On fusionne tous les fichiers
+paste genes.txt *tmp.txt > count_all.txt
+
+# On supprime les lignes qui débutent par '__'
+# et qui ne sont pas utiles
+grep -v "^__" count_all.txt > count_all_clean.txt
+
+# On supprime les fichiers temporaires
+rm -f genes.txt *tmp.txt count_all.txt
+```
+
