@@ -211,7 +211,7 @@ samtools sort reads_map/SRR3405783_Aligned.out.bam -o reads_map/SRR3405783_Align
 samtools index reads_map/SRR3405783_Aligned.sorted.out.bam
 ```
 
-Remarque : le tri des *reads* peut a priori se faire directement avec STAR en utilisant l'option `--outSAMtype BAM SortedByCoordinate`. Cependant, les tests réalisés sur le cluster ont montré qu'il y avait parfois des soucis avec cette option. Nous préférons donc utiliser `samtools` pour le tri des *reads*.
+Remarque : le tri des *reads* peut, a priori, se faire directement avec STAR en utilisant l'option `--outSAMtype BAM SortedByCoordinate`. Cependant, les tests réalisés sur le cluster ont montré qu'il y avait parfois des soucis avec cette option. Nous préférons donc utiliser `samtools` pour le tri des *reads*.
 
 
 La commande pour compter les *reads* devient alors :
