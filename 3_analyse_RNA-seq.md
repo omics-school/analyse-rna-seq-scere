@@ -204,7 +204,7 @@ Nous stockons les fichiers de comptage dans le répertoire `counts/SRR3405783` :
 mkdir -p counts/SRR3405783
 ```
 
-Le tri et l'indexation des *reads* alignés n'est pas explicitement mentionné dans les *Supporting Informations* mais est cependant nécessaire par `HTSeq` :
+Les étapes de tri et d'indexation des *reads* alignés ne sont pas explicitement mentionnées dans les *Supporting Informations* mais elles sont cependant nécessaires pour `HTSeq` :
 
 ```bash
 samtools sort reads_map/SRR3405783_Aligned.out.bam -o reads_map/SRR3405783_Aligned.sorted.out.bam
