@@ -118,11 +118,11 @@ En réalité, les *reads* ont une longueur de 51 bases et non pas 50 comme suppo
 
 Le paramètre `--sjdbOverhang` vaut donc 50 (51 - 1).
 
-*Remarque 1 : La commande `zcat` est particulière car elle affiche le contenu d'un fichier compressé (ici un fichier .gz) en le décompressant à la volée. La commande `cat` (sans le `z`) n'aurait pas permis une telle manipulation.*
+*Remarque : La commande `zcat` est particulière car elle affiche le contenu d'un fichier compressé (ici un fichier .gz) en le décompressant à la volée. La commande `cat` (sans le `z`) n'aurait pas permis une telle manipulation.*
 
 Vérifiez également que la longueur des *reads* est bien 51 en consultant les résultats du contrôle qualité fournis par FastQC.
 
-Enfin, le paramètre `--genomeSAindexNbases 10` est conseillé par STAR si on le lance sans :
+Enfin, le paramètre `--genomeSAindexNbases 10` est conseillé par STAR. Si on utilise STAR sans ce paramètre, on obtient le message :
 
 > !!!!! WARNING: --genomeSAindexNbases 14 is too large for the genome size=12157105, which may cause seg-fault at the mapping step. Re-run genome generation with recommended --genomeSAindexNbases 10
 
@@ -172,7 +172,7 @@ STAR --runThreadN 1 \
     
     Ceci explique pourquoi les options `--alignIntronMin 10` et `--alignIntronMax 3000` ont été adaptées pour le génome de la levure *S. cerevisiae*.
 
-- L'option `--readFilesCommand zcat` n'était pas présente dans la commande fournie en *Supporting information*. Nous l'avons ajoutée car les fichiers contenant les *reads* (*.fastq.gz*) sont compressés et il faut demander explicitement à STAR de le prendre en charge. Pensez à consultez toujour la [documentation](https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf) de l'outil que vous utilisez !
+- L'option `--readFilesCommand zcat` n'était pas présente dans la commande fournie en *Supporting information*. Nous l'avons ajoutée car les fichiers contenant les *reads* (*.fastq.gz*) sont compressés et il faut demander explicitement à STAR de le prendre en charge. Pensez à toujour consulter la [documentation](https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf) de l'outil que vous utilisez !
 
 - STAR a besoin d'écrire des fichiers temporaires, habituellement dans le répertoire courant. Mais il faut que ces fichiers soient situés sur une partition Unix. Comme vous lancez l'alignement depuis un répertoire Windows, l'option `--outTmpDir /tmp/star_tmp` spécifie le répertoire temporaire (Unix) à utiliser.
 
