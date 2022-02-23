@@ -59,7 +59,8 @@ do
     --alignIntronMax 3000 \
     --outFileNamePrefix "${base_dir}/reads_map/${sample}_" \
     --outFilterIntronMotifs RemoveNoncanonical \
-    --outSAMtype BAM Unsorted
+    --outSAMtype BAM Unsorted \
+    --outTmpDir /tmp/star_tmp
 
     echo "=============================================================="
     echo "Trier les reads alignés : échantillon ${sample}"
