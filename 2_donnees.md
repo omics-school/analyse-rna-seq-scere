@@ -98,7 +98,7 @@ Sur le site [SRA EXplorer](https://sra-explorer.info/) :
 1. Indiquez le numéro du *BioProject*, ici PRJNA319029, puis cliquez sur le petite loupe pour lancer la recherche.
 1. Vous obtenez ensuite 74 réponses qui correspondent aux différents fichiers / échantillons.
 1. Affinez les réponses en tapant « Scerevisiae » dans le champ « Filter results: ». vous devriez obtenir 50 résultats.
-1. Sélectionnez tous les résultats en cliquant sur le case voide à droite de *Title*.
+1. Sélectionnez tous les résultats en cliquant sur le case vide à droite de *Title*.
 1. Cliquez sur le bouton « Add 50 to collection ».
 1. Cliquez ensuite en haut à droite sur le bouton « 50 saved datasets ».
 1. Cliquez enfin sur « Bash script for downloading FastQ files ».
