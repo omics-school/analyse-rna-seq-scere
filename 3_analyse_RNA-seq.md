@@ -277,6 +277,14 @@ Téléchargez le script `analyse_locale.sh` qui analyse 3 échantillons :
 wget https://raw.githubusercontent.com/omics-school/analyse-rna-seq-scere/master/analyse_locale.sh
 ```
 
+Vérifiez dans le script que la ligne
+
+```bash
+samples="SRR3405783 SRR3405784 SRR3405788"
+```
+
+corresponde à VOS échantillons. Modifiez-la le cas échéant.
+
 Lancez ensuite le script d'analyse :
 
 ```bash
