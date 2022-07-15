@@ -75,7 +75,7 @@ rule map_reads:
     threads: 
         8
     shell:
-        "mkdir -p {params.folder} &&"
+        "mkdir -p {params.folder} && "
         "STAR --runThreadN {threads} "
         "--runMode alignReads "
         "--genomeDir {rules.index_genome.params.folder} "
