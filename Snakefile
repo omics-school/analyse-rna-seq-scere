@@ -102,5 +102,5 @@ rule sort_index_bam:
         1
     shell:     
         "samtools sort {input.bam} "
-        "-o {output.bam} && "
+        "-o {output.bam} ; "
         "samtools index {input.bam} "
