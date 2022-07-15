@@ -1,16 +1,16 @@
 __default__:
-  mem: 1GB
+  mem: 1000
   cpus: 1
 
 index_genome:
   cpus: 4
 
 map_reads:
-  mem: 3GB
+  mem: 3000
   cpus: 8
 
 sort_bam:
-  mem: 3GB
+  mem: 3000
 
 index_bam:
-  mem: 3GB
+  mem: 3000
