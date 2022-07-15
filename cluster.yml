@@ -6,6 +6,7 @@ index_genome:
 
 map_reads:
   mem: 3GB
+  cpus: 8
 
 sort_bam:
   mem: 3GB
