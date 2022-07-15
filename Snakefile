@@ -62,7 +62,8 @@ rule index_genome:
 
 rule map_reads:
     input:
-        fastq="reads/{sample}.fastq.gz"
+        fastq="reads/{sample}.fastq.gz",
+        index="{rules.index_genome.output.index}"
     output:
         bam="reads_map/{sample}_Aligned.out.bam"
     params:
