@@ -1,0 +1,11 @@
+__default__:
+  mem: 2000
+
+map_reads:
+  mem: 3000
+
+sort_bam:
+  mem: 3000
+
+index_bam:
+  mem: 3000

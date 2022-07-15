@@ -4,3 +4,5 @@ reads_map/
 genome/
 genome_index/
 counts/
+
+.snakemake/

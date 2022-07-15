@@ -1,0 +1,11 @@
+name: rnaseq-scere-workflow
+# channels priority
+# see https://bioconda.github.io/
+# conda-forge has highest priority
+channels:
+  - defaults
+  - bioconda
+  - conda-forge
+dependencies:
+  - python=3.9
+  - snakemake-minimal

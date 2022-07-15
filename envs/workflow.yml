@@ -1,0 +1,15 @@
+name: rnaseq-scere-workflow-tools
+# channels priority
+# see https://bioconda.github.io/
+# conda-forge has highest priority
+channels:
+  - defaults
+  - bioconda
+  - conda-forge
+dependencies:
+  - sra-tools
+  - fastqc
+  - star
+  - htseq
+  - cufflinks
+  - samtools
