@@ -15,4 +15,4 @@ module load slurm-drmaa
 snakemake --cluster-config cluster.yml \
     --drmaa " --mem={cluster.mem}" \
     --use-conda \
-    --jobs="${NJOBS}"
+    --jobs "${NJOBS}"
