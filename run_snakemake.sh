@@ -7,4 +7,5 @@ set -euo pipefail
 module load snakemake
 module load slurm-drmaa
 
-snakemake --cluster-config cluster.yml --use-conda --drmaa --jobs=20 " --mem={cluster.mem}" 
+# --jobs=xx is the maximum number of cpus used simultaneously
+snakemake --cluster-config cluster.yml --use-conda --drmaa --jobs=50 " --mem={cluster.mem}" 
