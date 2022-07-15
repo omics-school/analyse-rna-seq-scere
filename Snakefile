@@ -100,7 +100,8 @@ rule sort_index_bam:
         "envs/workflow.yml"
     threads: 
         1
-    shell:     
-        "samtools sort {input.bam} "
-        "-o {output.bam} ; "
-        "samtools index {input.bam} "
+    shell: 
+        """
+        samtools sort {input.bam} -o {output.bam} 
+        samtools index {input.bam}
+        """
