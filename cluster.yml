@@ -1,5 +1,6 @@
 __default__:
   mem: 1GB
+  cpus: 1
 
 index_genome:
   cpus: 4
