@@ -9,8 +9,5 @@ map_reads:
   mem: 3000
   cpus: 8
 
-sort_bam:
-  mem: 3000
-
-index_bam:
-  mem: 3000
+sort_index_bam:
+  mem: 2000

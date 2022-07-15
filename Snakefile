@@ -9,10 +9,8 @@ rule make_all:
         "genome_index/SAindex",
         # Reads mapping
         expand("reads_map/{sample}_Aligned.out.bam", sample=SAMPLES),
-        # BAM sorting
+        # BAM sorting and indexing
         expand("reads_map/{sample}_Aligned.sorted.out.bam", sample=SAMPLES),
-        # BAM indexing
-        expand("reads_map/{sample}_Aligned.sorted.out.bam.bai", sample=SAMPLES),
 
 
 rule clean:
@@ -25,14 +23,15 @@ rule control_read_quality:
         "reads/{sample}.fastq.gz"
     output:
         "reads_qc/{sample}_fastqc.html"
+    params:
+        folder=directory("reads_qc")
     message:
         "Checking read quality for {input}"
     conda:
         "envs/workflow.yml"
     shell:
-        "mkdir -p reads_qc && "
         "fastqc {input} "
-        "--outdir reads_qc"
+        "--outdir {params.folder}"
 
 
 rule index_genome:
@@ -42,7 +41,7 @@ rule index_genome:
     output:
         index="genome_index/SAindex"
     params:
-        folder="genome_index"
+        folder=directory("genome_index")
     message:
         "Indexing reference genome {input.sequence}"
     conda:
@@ -50,7 +49,6 @@ rule index_genome:
     threads: 
         4
     shell:
-        "mkdir -p {params.folder} && "
         "STAR --runThreadN {threads} "
         "--runMode genomeGenerate "
         "--genomeDir {params.folder} "
@@ -63,11 +61,11 @@ rule index_genome:
 rule map_reads:
     input:
         fastq="reads/{sample}.fastq.gz",
-        index="{rules.index_genome.output.index}"
+        index=rules.index_genome.output.index
     output:
         bam="reads_map/{sample}_Aligned.out.bam"
     params:
-        folder="reads_map",
+        folder=directory("reads_map"),
         prefix="reads_map/{sample}_"
     message:
         "Mapping reads {input.fastq} to the reference genome"
@@ -76,7 +74,6 @@ rule map_reads:
     threads: 
         8
     shell:
-        "mkdir -p {params.folder} && "
         "STAR --runThreadN {threads} "
         "--runMode alignReads "
         "--genomeDir {rules.index_genome.params.folder} "
@@ -91,32 +88,19 @@ rule map_reads:
         "--outSAMtype BAM Unsorted"
 
 
-rule sort_bam:
+rule sort_index_bam:
     input:
         bam="reads_map/{sample}_Aligned.out.bam"
     output:
-        bam="reads_map/{sample}_Aligned.sorted.out.bam"
+        bam="reads_map/{sample}_Aligned.sorted.out.bam",
+        bai="reads_map/{sample}_Aligned.sorted.out.bam.bai"
     message:
-        "Sorting BAM {input.bam}"
+        "Sorting and indexing BAM {input.bam}"
     conda:
         "envs/workflow.yml"
     threads: 
         1
     shell:     
         "samtools sort {input.bam} "
-        "-o {output.bam}"
-
-
-rule index_bam:
-    input:
-        bam="reads_map/{sample}_Aligned.sorted.out.bam"
-    output:
-        bai="reads_map/{sample}_Aligned.sorted.out.bam.bai"
-    message:
-        "Indexing BAM {input.bam}"
-    conda:
-        "envs/workflow.yml"
-    threads: 
-        1
-    shell:     
+        "-o {output.bam} && "
         "samtools index {input.bam} "
