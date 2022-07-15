@@ -48,7 +48,7 @@ rule index_genome:
     conda:
         "envs/workflow.yml"
     threads: 
-        8
+        4
     shell:
         "mkdir -p {params.folder} && "
         "STAR --runThreadN {threads} "

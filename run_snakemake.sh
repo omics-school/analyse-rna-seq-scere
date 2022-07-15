@@ -13,6 +13,7 @@ module load slurm-drmaa
 
 # --jobs=xx is the maximum number of cpus used simultaneously
 snakemake --cluster-config cluster.yml \
-    --drmaa " --mem={cluster.mem}" \
+    --drmaa " --mem={cluster.mem} --cpus-per-task={cluster.cpus}" \
     --use-conda \
     --jobs "${NJOBS}"
+    --latency-wait 20

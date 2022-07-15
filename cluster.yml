@@ -1,11 +1,14 @@
 __default__:
-  mem: 2000
+  mem: 1GB
+
+index_genome:
+  cpus: 4
 
 map_reads:
-  mem: 3000
+  mem: 3GB
 
 sort_bam:
-  mem: 3000
+  mem: 3GB
 
 index_bam:
-  mem: 3000
+  mem: 3GB
