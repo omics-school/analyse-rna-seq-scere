@@ -3,10 +3,8 @@ import os
 DATA_DIR = os.environ.get("DATA_DIR", os.getcwd())
 BASE_DIR = os.environ.get("BASE_DIR", os.getcwd())
 
-SAMPLES, = glob_wildcards(DATA_DIR + "/reads/{sample}.fastq.gz")
-#SAMPLES = ['SRR3405791', 'SRR3405788', 'SRR3405783', 'SRR3405784', 'SRR3405789']
-
-#print(SAMPLES)
+SAMPLES = ["SRR3405791", "SRR3405788", "SRR3405783", "SRR3405784", "SRR3405789"]
+#SAMPLES, = glob_wildcards(DATA_DIR + "/reads/{sample}.fastq.gz")
 
 onstart:
     print(SAMPLES)
