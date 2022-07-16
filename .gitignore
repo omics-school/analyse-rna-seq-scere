@@ -6,3 +6,4 @@ genome_index/
 counts/
 
 .snakemake/
+slurm*
