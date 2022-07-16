@@ -1,16 +1,24 @@
-SAMPLES, = glob_wildcards("reads/{sample}.fastq.gz")
+import os
 
+DATA_DIR = os.environ.get("DATA_DIR", os.getcwd())
+BASE_DIR = os.environ.get("BASE_DIR", os.getcwd())
+
+SAMPLES, = glob_wildcards(DATA_DIR + "/reads/{sample}.fastq.gz")
+#SAMPLES = ['SRR3405791', 'SRR3405788', 'SRR3405783', 'SRR3405784', 'SRR3405789']
+
+#print(SAMPLES)
+
+onstart:
+    print(SAMPLES)
 
 rule make_all:
     input:
         # Quality control
-        expand("reads_qc/{sample}_fastqc.html", sample=SAMPLES),
+        expand(BASE_DIR + "/reads_qc/{sample}_fastqc.html", sample=SAMPLES),
         # Genome index
-        "genome_index/SAindex",
-        # Reads mapping
-        expand("reads_map/{sample}_Aligned.out.bam", sample=SAMPLES),
+        BASE_DIR + "/genome_index/SAindex",
         # BAM sorting and indexing
-        expand("reads_map/{sample}_Aligned.sorted.out.bam", sample=SAMPLES),
+        expand(BASE_DIR + "/reads_map/{sample}_Aligned.sorted.out.bam", sample=SAMPLES),
 
 
 rule clean:
@@ -20,15 +28,15 @@ rule clean:
 
 rule control_read_quality:
     input:
-        "reads/{sample}.fastq.gz"
+        DATA_DIR + "/reads/{sample}.fastq.gz"
     output:
-        "reads_qc/{sample}_fastqc.html"
+        BASE_DIR + "/reads_qc/{sample}_fastqc.html"
     params:
-        folder=directory("reads_qc")
+        folder = directory(BASE_DIR + "/reads_qc")
     message:
         "Checking read quality for {input}"
     conda:
-        "envs/workflow.yml"
+        "workflow.yml"
     shell:
         "fastqc {input} "
         "--outdir {params.folder}"
@@ -36,16 +44,16 @@ rule control_read_quality:
 
 rule index_genome:
     input:
-        sequence="genome/genome.fa",
-        annotation="genome/genes.gtf"
+        sequence = DATA_DIR + "genome/genome.fa",
+        annotation = DATA_DIR + "genome/genes.gtf"
     output:
-        index="genome_index/SAindex"
+        index = BASE_DIR + "genome_index/SAindex"
     params:
-        folder=directory("genome_index")
+        folder = directory(BASE_DIR + "genome_index")
     message:
         "Indexing reference genome {input.sequence}"
     conda:
-        "envs/workflow.yml"
+        "workflow.yml"
     threads: 
         4
     shell:
@@ -60,17 +68,17 @@ rule index_genome:
 
 rule map_reads:
     input:
-        fastq="reads/{sample}.fastq.gz",
-        index=rules.index_genome.output.index
+        fastq = DATA_DIR + "/reads/{sample}.fastq.gz",
+        index = rules.index_genome.output.index
     output:
-        bam="reads_map/{sample}_Aligned.out.bam"
+        bam = BASE_DIR + "/reads_map/{sample}_Aligned.out.bam"
     params:
-        folder=directory("reads_map"),
-        prefix="reads_map/{sample}_"
+        folder = directory(BASE_DIR + "/reads_map"),
+        prefix = BASE_DIR + "/reads_map/{sample}_"
     message:
         "Mapping reads {input.fastq} to the reference genome"
     conda:
-        "envs/workflow.yml"
+        "workflow.yml"
     threads: 
         8
     shell:
@@ -90,14 +98,14 @@ rule map_reads:
 
 rule sort_index_bam:
     input:
-        bam="reads_map/{sample}_Aligned.out.bam"
+        bam = BASE_DIR + "/reads_map/{sample}_Aligned.out.bam"
     output:
-        bam="reads_map/{sample}_Aligned.sorted.out.bam",
-        bai="reads_map/{sample}_Aligned.sorted.out.bam.bai"
+        bam = BASE_DIR + "/reads_map/{sample}_Aligned.sorted.out.bam",
+        bai = BASE_DIR + "/reads_map/{sample}_Aligned.sorted.out.bam.bai"
     message:
         "Sorting and indexing BAM {input.bam}"
     conda:
-        "envs/workflow.yml"
+        "workflow.yml"
     threads: 
         1
     shell: 
