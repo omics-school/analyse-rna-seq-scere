@@ -44,12 +44,12 @@ rule control_read_quality:
 
 rule index_genome:
     input:
-        sequence = DATA_DIR + "genome/genome.fa",
-        annotation = DATA_DIR + "genome/genes.gtf"
+        sequence = DATA_DIR + "/genome/genome.fa",
+        annotation = DATA_DIR + "/genome/genes.gtf"
     output:
-        index = BASE_DIR + "genome_index/SAindex"
+        index = BASE_DIR + "/genome_index/SAindex"
     params:
-        folder = directory(BASE_DIR + "genome_index")
+        folder = directory(BASE_DIR + "/genome_index")
     message:
         "Indexing reference genome {input.sequence}"
     conda:
