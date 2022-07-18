@@ -1,36 +1,35 @@
 import os
 
 DATA_DIR = os.environ.get("DATA_DIR", os.getcwd())
-BASE_DIR = os.environ.get("BASE_DIR", os.getcwd())
 
 SAMPLES = ["SRR3405791", "SRR3405788", "SRR3405783", "SRR3405784", "SRR3405789"]
 #SAMPLES, = glob_wildcards(DATA_DIR + "/reads/{sample}.fastq.gz")
 
+workdir: os.environ.get("WORK_DIR", os.getcwd())
+
+
 onstart:
-    print(SAMPLES)
+    print(f"Working directory:\n{os.getcwd()}")
+    print(f"Samples:\n{SAMPLES}")
+
 
 rule make_all:
     input:
         # Quality control
-        expand(BASE_DIR + "/reads_qc/{sample}_fastqc.html", sample=SAMPLES),
+        expand("reads_qc/{sample}_fastqc.html", sample=SAMPLES),
         # Genome index
-        BASE_DIR + "/genome_index/SAindex",
+        "genome_index/SAindex",
         # BAM sorting and indexing
-        expand(BASE_DIR + "/reads_map/{sample}_Aligned.sorted.out.bam", sample=SAMPLES),
-
-
-rule clean:
-    shell:
-        "rm -rf reads_qc genome_index reads_map"
+        expand("reads_map/{sample}_Aligned.sorted.out.bam", sample=SAMPLES),
 
 
 rule control_read_quality:
     input:
         DATA_DIR + "/reads/{sample}.fastq.gz"
     output:
-        BASE_DIR + "/reads_qc/{sample}_fastqc.html"
+        "reads_qc/{sample}_fastqc.html"
     params:
-        folder = directory(BASE_DIR + "/reads_qc")
+        folder = directory("reads_qc")
     message:
         "Checking read quality for {input}"
     conda:
@@ -45,9 +44,9 @@ rule index_genome:
         sequence = DATA_DIR + "/genome/genome.fa",
         annotation = DATA_DIR + "/genome/genes.gtf"
     output:
-        index = BASE_DIR + "/genome_index/SAindex"
+        index =  "genome_index/SAindex"
     params:
-        folder = directory(BASE_DIR + "/genome_index")
+        folder = directory("genome_index")
     message:
         "Indexing reference genome {input.sequence}"
     conda:
@@ -69,10 +68,10 @@ rule map_reads:
         fastq = DATA_DIR + "/reads/{sample}.fastq.gz",
         index = rules.index_genome.output.index
     output:
-        bam = BASE_DIR + "/reads_map/{sample}_Aligned.out.bam"
+        bam = "reads_map/{sample}_Aligned.out.bam"
     params:
-        folder = directory(BASE_DIR + "/reads_map"),
-        prefix = BASE_DIR + "/reads_map/{sample}_"
+        folder = directory("reads_map"),
+        prefix = "reads_map/{sample}_"
     message:
         "Mapping reads {input.fastq} to the reference genome"
     conda:
@@ -96,10 +95,10 @@ rule map_reads:
 
 rule sort_index_bam:
     input:
-        bam = BASE_DIR + "/reads_map/{sample}_Aligned.out.bam"
+        bam = "reads_map/{sample}_Aligned.out.bam"
     output:
-        bam = BASE_DIR + "/reads_map/{sample}_Aligned.sorted.out.bam",
-        bai = BASE_DIR + "/reads_map/{sample}_Aligned.sorted.out.bam.bai"
+        bam = "reads_map/{sample}_Aligned.sorted.out.bam",
+        bai = "reads_map/{sample}_Aligned.sorted.out.bam.bai"
     message:
         "Sorting and indexing BAM {input.bam}"
     conda:
